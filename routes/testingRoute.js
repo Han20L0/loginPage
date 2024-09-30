@@ -1,15 +1,14 @@
 /** @format */
 
 const express = require("express");
-//const router = require(".");
-const app = express();
+const router = express.Router();
 const multer = require("multer");
 
 // Middleware untuk memproses form data (multipart/form-data)
 const upload = multer();
 
 // Route untuk menerima berbagai jenis data
-app.post("/api/data", upload.none(), (req, res) => {
+router.post("/api/data", upload.none(), (req, res) => {
 	// Cek content-type untuk menentukan jenis pengiriman data
 	const contentType = req.headers["content-type"];
 
@@ -38,4 +37,4 @@ app.post("/api/data", upload.none(), (req, res) => {
 	}
 });
 
-module.exports = app;
+module.exports = router;

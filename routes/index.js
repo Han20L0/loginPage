@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const authenticate = require("../middlewares/authenticates");
 const testingRoute = require("./testingRoute");
-//const userRoute = require("./userRoute");
+const userRoute = require("./userRoute");
 
 // Route sederhana
 router.get("/", authenticate, (req, res) => {
@@ -14,6 +14,6 @@ router.get("/", authenticate, (req, res) => {
 });
 
 router.use(testingRoute);
-//router.use(userRoute);
+router.use(userRoute);
 
 module.exports = router;

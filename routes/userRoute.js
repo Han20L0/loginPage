@@ -1,7 +1,7 @@
 /** @format */
 
 const express = require("express");
-const router = express.Route();
+const router = express.Router();
 const loginController = require("../controllers/loginController");
 const authenticate = require("../middlewares/authenticates");
 
