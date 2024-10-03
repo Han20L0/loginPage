@@ -159,6 +159,59 @@ class loginController {
 			next(error); // Tangani error lain yang mungkin terjadi
 		}
 	}
+
+	// Method getAllUsers - Melihat semua user dengan pagination, sorting, dan filtering
+	static async PagFilSort(req, res, next) {
+		try {
+			// Ambil query parameter limit, page, sortBy, sortOrder, dan filter dari request
+			let { page, limit, sortBy, sortOrder, username, role } = req.query;
+
+			// Default nilai jika limit atau page tidak diberikan
+			limit = limit ? parseInt(limit) : 10;
+			const offset = page ? (parseInt(page) - 1) * limit : 0;
+
+			// Tentukan default sorting
+			sortBy = sortBy || "id"; // Kolom yang digunakan untuk sorting
+			sortOrder = sortOrder || "ASC"; // Urutan ASC atau DESC
+
+			// Membuat kondisi filtering
+			let whereCondition = {};
+			if (username) {
+				whereCondition.username = { [Op.iLike]: `%${username}%` }; // Filter by username (case-insensitive)
+			}
+			if (role) {
+				whereCondition.role = role; // Filter by role
+			}
+
+			// Ambil semua user dari database dengan limit, offset, sorting, dan filtering
+			const { count, rows: users } = await User.findAndCountAll({
+				attributes: ["id", "username", "role"], // Ambil kolom id, username, dan role
+				where: whereCondition, // Apply filtering
+				limit,
+				offset,
+				order: [[sortBy, sortOrder.toUpperCase()]], // Apply sorting
+			});
+
+			// Jika tidak ada user ditemukan
+			if (!users || users.length === 0) {
+				return next({
+					name: "NotFoundError",
+					message: "No users found",
+				});
+			}
+
+			// Kirim respons semua user dengan pagination, sorting, dan filtering
+			res.status(200).json({
+				message: "Users retrieved successfully",
+				totalItems: count,
+				totalPages: Math.ceil(count / limit),
+				currentPage: page ? parseInt(page) : 1,
+				users,
+			});
+		} catch (error) {
+			next(error);
+		}
+	}
 }
 
 module.exports = loginController;

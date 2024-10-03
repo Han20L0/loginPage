@@ -13,4 +13,6 @@ router.get("/profile/all", authenticate, loginController.getAllUsers);
 
 router.get("/profile/token", authenticate, loginController.getUserByToken);
 
+router.get("/query", authenticate, loginController.PagFilSort);
+
 module.exports = router;
